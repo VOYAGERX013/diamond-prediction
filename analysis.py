@@ -3,9 +3,20 @@
 import pandas as pd
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
+import os
 
-# Create a dataframe from the csv file
-df = pd.read_csv("./dataset/01-07-2022-01-53-38.csv")
+# Getting all the csv files
+csv_files = os.listdir("path/to/dataset")
+print(csv_files)
+# Creating an empty dataframe
+df = pd.DataFrame()
+
+# Filling data from all csv files to the dataframe
+for file in csv_files:
+    df_temporary = pd.read_csv("./dataset/" + file)
+    df = df.append(df_temporary, ignore_index=True)
+
+print(df.head())
 
 # Dropping the calibration records
 df = df[df["Diamond"].str.contains("Calibration") == False]
@@ -37,7 +48,7 @@ cls = SVC().fit(X_train, y_train)
 
 # Get the accuracy of the model by trying it on the testing set
 accuracy_test = accuracy_score(y_test, cls.predict(X_test))
-print(f"Test Accuracy: ${accuracy_text * 100}%")
+print(f"Test Accuracy: {accuracy_test * 100}%")
 
 # Saving the predictions for all records
 df["prediction"] = cls.predict(X)
